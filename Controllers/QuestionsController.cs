@@ -13,6 +13,7 @@ namespace foodbooks.Controllers
     [ApiController]
     public class QuestionsController : ControllerBase
     {
+        [AllowAnonymous]
         [HttpGet,Route("getQuestionTypeDropdown")]
         public List<Dropdown> getQuestionTypes() 
         {

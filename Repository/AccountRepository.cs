@@ -43,9 +43,14 @@ namespace foodbooks.Repository
             
             if (user != null && await userManager.CheckPasswordAsync(user, loginViewModel.password)) 
             {
-                var RolesList= await userManager.GetRolesAsync(user);
-                return new OkObjectResult(new { token = utils.GenerateAccessToken(user.Id,user), message = "Login Sucessful", roles =RolesList});
-            }else
+                if(await userManager.IsEmailConfirmedAsync(user)) 
+                {
+                    var RolesList = await userManager.GetRolesAsync(user);
+                    return new OkObjectResult(new { token = utils.GenerateAccessToken(user.Id, user), message = "Login Sucessful", roles = RolesList });
+                }else
+                    return new BadRequestObjectResult("Email is not Confirmed");
+            }
+            else
                 return new BadRequestObjectResult("Invalid Username or Password");
         }
 

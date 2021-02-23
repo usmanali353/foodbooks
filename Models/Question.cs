@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -25,5 +26,7 @@ namespace foodbooks.Models
         [ForeignKey(nameof(CategoryId))]
         [InverseProperty(nameof(Category.Questions))]
         public virtual Category category { get; set; }
+        
+        public List<QuestionOptions> questionOptions { get; set;}
     }
 }
