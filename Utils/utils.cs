@@ -53,5 +53,17 @@ namespace foodbooks.Utils
             return tokenHandler.WriteToken(token);
 
         }
+
+
+        public static List<Dropdown> getQuestionTypes() 
+        {
+            return new List<Dropdown> 
+            {
+                new Dropdown{id=1,name="Star Rating"},
+                new Dropdown{id=2,name="Yes/No" },
+                new Dropdown{id=3,name ="Dropdown" },
+                new Dropdown{id=4,name="Numbering" }
+            };
+        }
     }
 }

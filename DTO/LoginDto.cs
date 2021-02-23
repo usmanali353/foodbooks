@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace foodbooks.Models
 {
-    public class LoginViewModel
+    public class LoginDto
     {
         [Required]
         [EmailAddress]

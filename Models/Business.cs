@@ -10,9 +10,9 @@ namespace foodbooks.Models
     public class Business
     {
         [Key]
-        public int Id { get; set; }
+        public int id { get; set; }
         [Required]
-        public string Name { get; set; }
+        public string name { get; set; }
         [Required]
         [Phone]
         public string Phone { get; set; }
@@ -36,9 +36,12 @@ namespace foodbooks.Models
 
         public string Qrimage { get; set; }
 
+        public bool isVisible { get; set; }
+
         [JsonIgnore]
         public List<Category> Categories { get; set; }
 
-      
+        [JsonIgnore]
+        public List<Question> Questions { get; set; }
     }
 }

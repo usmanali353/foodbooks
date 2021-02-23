@@ -37,9 +37,10 @@ namespace foodbooks.Repository
             return new BadRequestObjectResult(sb.ToString());
         }
 
-        public async Task<ActionResult> SignIn(LoginViewModel loginViewModel)
+        public async Task<ActionResult> SignIn(LoginDto loginViewModel)
         {
             var user = await userManager.FindByEmailAsync(loginViewModel.email);
+            
             if (user != null && await userManager.CheckPasswordAsync(user, loginViewModel.password)) 
             {
                 var RolesList= await userManager.GetRolesAsync(user);

@@ -2,6 +2,7 @@
 using foodbooks.Models;
 using foodbooks.Repository;
 using foodbooks.Utils;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -28,9 +29,9 @@ namespace foodbooks.Controllers
             this.userManager = userManager;
             this.roleManager = roleManager;
         }
-
+        [AllowAnonymous]
         [HttpPost,Route("Register")]
-        public async Task<ActionResult> SignUp(RegisterViewModel registerViewModel)
+        public async Task<ActionResult> SignUp(RegisterDto registerViewModel)
         {
             var user = new ApplicationUser
             {
@@ -71,16 +72,16 @@ namespace foodbooks.Controllers
                     sb.Append(error.Description + "\n");
             return new BadRequestObjectResult(sb.ToString());
         }
-
+        [AllowAnonymous]
         [HttpGet, Route("VerifyEmail")]
         public async Task<ActionResult> ConfirmEmail(string userId, string token)
         {
 
             return await _accountRepository.ConfirmEmail(userId, token);
         }
-
+        [AllowAnonymous]
         [HttpPost, Route("Login")]
-        public async Task<ActionResult> SignIn(LoginViewModel loginViewmodel) 
+        public async Task<ActionResult> SignIn(LoginDto loginViewmodel) 
         {
             
             return await _accountRepository.SignIn(loginViewmodel);
