@@ -73,9 +73,9 @@ namespace foodbooks.Controllers
         }
 
         [HttpGet, Route("VerifyEmail")]
-        public async Task<ActionResult> ConfirmEmail(string userId, string token) 
+        public async Task<ActionResult> ConfirmEmail(string userId, string token)
         {
-           
+
             return await _accountRepository.ConfirmEmail(userId, token);
         }
 

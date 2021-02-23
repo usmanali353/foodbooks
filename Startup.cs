@@ -2,21 +2,26 @@
 using foodbooks.IRepository;
 using foodbooks.Models;
 using foodbooks.Repository;
+using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Mime;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -34,13 +39,16 @@ namespace foodbooks
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            #region Adding DbContext
             services.AddDbContext<ApplicationdbContext>(op => op.UseSqlServer(Configuration.GetConnectionString("Database"))); //Add   
-            
+            #endregion
+            #region Cnfiguring Identity
             services.AddIdentity<ApplicationUser, IdentityRole>(options =>
             {
                 options.SignIn.RequireConfirmedEmail = true;
             }).AddEntityFrameworkStores<ApplicationdbContext>().AddDefaultTokenProviders();
-
+            #endregion
+            #region Configuring Jwt
             var jwtSection = Configuration.GetSection("JWTSettings");
             services.Configure<JWTSettings>(jwtSection);
             var appSettings = jwtSection.Get<JWTSettings>();
@@ -53,13 +61,15 @@ namespace foodbooks
 
                 x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
 
+                x.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+
             })
 
             .AddJwtBearer(x =>
 
             {
 
-                x.RequireHttpsMetadata = true;
+                x.RequireHttpsMetadata = false;
 
                 x.SaveToken = true;
 
@@ -71,23 +81,37 @@ namespace foodbooks
                     ValidateLifetime = true,
                     IssuerSigningKey = new SymmetricSecurityKey(key),
 
-                    ValidateIssuer = false,
+                    ValidateIssuer = true,
 
-                    ValidateAudience = false,
+                    ValidateAudience = true,
+
+            
 
                     ClockSkew = TimeSpan.Zero
 
                 };
 
             });
+            #endregion
             services.AddControllers().AddNewtonsoftJson(options =>
     options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
-            
+            #region Configuring Health Checks
+            services.AddHealthChecks().AddSqlServer(Configuration.GetConnectionString("Database"));
+            services.AddHealthChecksUI(opt =>
+            {
+                opt.AddHealthCheckEndpoint("SurveyApp APIs", "/health"); //map health check api
+            })
+       .AddInMemoryStorage();
+            #endregion
+            #region Configuring Swagger
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "foodbooks", Version = "v1" });
             });
+            #endregion
+            #region Initializing Repositories
             InitializeRepositories(services);
+            #endregion
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -99,7 +123,7 @@ namespace foodbooks
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "foodbooks v1"));
             }
-
+            
             app.UseRouting();
 
             app.UseAuthentication();
@@ -108,7 +132,26 @@ namespace foodbooks
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapControllers();
+                endpoints.MapControllers().RequireAuthorization();
+                endpoints.MapHealthChecks("/health", new Microsoft.AspNetCore.Diagnostics.HealthChecks.HealthCheckOptions
+                {
+                    Predicate = _ => true,
+                    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse,
+
+                    /*ResponseWriter = async (context, report) =>
+                    {
+                        var result = JsonConvert.SerializeObject(
+                            new
+                            {
+                                status = report.Status.ToString(),
+                                details = report.Entries.Select(e => new { key = e.Key, value = Enum.GetName(typeof(HealthStatus), e.Value.Status) })
+                            });
+                        context.Response.ContentType = MediaTypeNames.Application.Json;
+                        await context.Response.WriteAsync(result);
+                    }*/
+                }) ;
+                endpoints.MapHealthChecksUI();
+              
             });
         }
 

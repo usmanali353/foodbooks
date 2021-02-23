@@ -46,9 +46,6 @@ namespace foodbooks.Repository
                 return new OkObjectResult(new { token = utils.GenerateAccessToken(user.Id,user), message = "Login Sucessful", roles =RolesList});
             }else
                 return new BadRequestObjectResult("Invalid Username or Password");
-
-
-
         }
 
     }
