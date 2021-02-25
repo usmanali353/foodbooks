@@ -10,7 +10,7 @@ namespace foodbooks.IRepository
     interface IQuestionRepository
     {
         public Task<ActionResult> AddQuestion(QuestionDTO questionDto);
-        public Task<ActionResult> ChangeVisibility();
+        public Task<ActionResult> ChangeVisibility(int id);
         public Task<ActionResult> UpdateQuestion(int id,QuestionDTO questionDto);
     }
 }

@@ -20,10 +20,10 @@ namespace foodbooks.Models
         public string Website { get; set; }
         [Required]
         public string Description { get; set; }
-        [Required]
-        public double Longitude { get; set; }
-        [Required]
-        public double Latitude { get; set; }
+        
+        public double? Longitude { get; set; }
+        
+        public double? Latitude { get; set; }
         public string Address { get; set; }
 
         public TimeSpan? OpeningTime { get; set; }
@@ -36,6 +36,8 @@ namespace foodbooks.Models
 
         public string Qrimage { get; set; }
 
+        public double OverallRating { get; set; }
+
         public bool isVisible { get; set; }
 
         [JsonIgnore]
@@ -43,5 +45,8 @@ namespace foodbooks.Models
 
         [JsonIgnore]
         public List<Question> Questions { get; set; }
+
+        [JsonIgnore]
+        public List<CustomerFeedBack> FeedBacks { get; set; }
     }
 }

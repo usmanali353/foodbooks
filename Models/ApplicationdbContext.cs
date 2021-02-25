@@ -13,6 +13,12 @@ namespace foodbooks.Models
         {
 
         }
+        public DbSet<Business> Businesses { get; set; }
+        public DbSet<Category> Categories { get; set; }
+        public DbSet<Question> Questions { get; set; }
+        public DbSet<QuestionOptions> QuestionOptions { get; set; }
+        public DbSet<Feedback> Feedbacks { get; set; }
+        public DbSet<CustomerFeedBack> CustomerFeedBacks { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             base.OnConfiguring(optionsBuilder);

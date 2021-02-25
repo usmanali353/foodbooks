@@ -15,7 +15,7 @@ namespace foodbooks.Models
 
         public string Name { get; set; }
         
-        public int BusinessId { get; set; }
+        public int? BusinessId { get; set; }
 
         [ForeignKey(nameof(BusinessId))]
         [InverseProperty(nameof(Business.Categories))]
@@ -23,6 +23,8 @@ namespace foodbooks.Models
 
         public bool isVisible { get; set; }
         [JsonIgnore]
-        public List<Question> Questions { get; set; }
+        public virtual ICollection<Question> Questions { get; set; }
+        [JsonIgnore]
+        public virtual ICollection<CustomerFeedBack> FeedBacks { get; set; }
     }
 }

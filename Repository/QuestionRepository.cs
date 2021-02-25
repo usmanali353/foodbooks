@@ -22,7 +22,7 @@ namespace foodbooks.Repository
             throw new NotImplementedException();
         }
 
-        public Task<ActionResult> ChangeVisibility()
+        public Task<ActionResult> ChangeVisibility(int id)
         {
             throw new NotImplementedException();
         }

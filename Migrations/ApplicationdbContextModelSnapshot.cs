@@ -224,6 +224,209 @@ namespace foodbooks.Migrations
                     b.ToTable("AspNetUsers");
                 });
 
+            modelBuilder.Entity("foodbooks.Models.Business", b =>
+                {
+                    b.Property<int>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Address")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<TimeSpan?>("ClosingTime")
+                        .HasColumnType("time");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Image")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<double?>("Latitude")
+                        .HasColumnType("float");
+
+                    b.Property<double?>("Longitude")
+                        .HasColumnType("float");
+
+                    b.Property<TimeSpan?>("OpeningTime")
+                        .HasColumnType("time");
+
+                    b.Property<double>("OverallRating")
+                        .HasColumnType("float");
+
+                    b.Property<string>("OwnerId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Phone")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Qrimage")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Website")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("isVisible")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("id");
+
+                    b.ToTable("Businesses");
+                });
+
+            modelBuilder.Entity("foodbooks.Models.Category", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int?>("BusinessId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("isVisible")
+                        .HasColumnType("bit");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BusinessId");
+
+                    b.ToTable("Categories");
+                });
+
+            modelBuilder.Entity("foodbooks.Models.CustomerFeedBack", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int?>("BusinessId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("CategoryId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("QuestionId")
+                        .HasColumnType("int");
+
+                    b.Property<double>("Rating")
+                        .HasColumnType("float");
+
+                    b.Property<DateTime?>("dateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("feedbackId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BusinessId");
+
+                    b.HasIndex("CategoryId");
+
+                    b.HasIndex("QuestionId");
+
+                    b.HasIndex("feedbackId");
+
+                    b.ToTable("CustomerFeedBacks");
+                });
+
+            modelBuilder.Entity("foodbooks.Models.Feedback", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("CustomerName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Email")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<double?>("OverallRating")
+                        .HasColumnType("float");
+
+                    b.Property<string>("Phone")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("dateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("isVisible")
+                        .HasColumnType("bit");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Feedbacks");
+                });
+
+            modelBuilder.Entity("foodbooks.Models.Question", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int?>("BusinessId")
+                        .IsRequired()
+                        .HasColumnType("int");
+
+                    b.Property<int?>("CategoryId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("QuestionText")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("QuestionType")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BusinessId");
+
+                    b.HasIndex("CategoryId");
+
+                    b.ToTable("Questions");
+                });
+
+            modelBuilder.Entity("foodbooks.Models.QuestionOptions", b =>
+                {
+                    b.Property<int>("QuestionOptionId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("QuestionOptionText")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<double>("Rating")
+                        .HasColumnType("float");
+
+                    b.Property<int?>("questionsId")
+                        .HasColumnType("int");
+
+                    b.HasKey("QuestionOptionId");
+
+                    b.HasIndex("questionsId");
+
+                    b.ToTable("QuestionOptions");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -273,6 +476,96 @@ namespace foodbooks.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("foodbooks.Models.Category", b =>
+                {
+                    b.HasOne("foodbooks.Models.Business", "business")
+                        .WithMany("Categories")
+                        .HasForeignKey("BusinessId");
+
+                    b.Navigation("business");
+                });
+
+            modelBuilder.Entity("foodbooks.Models.CustomerFeedBack", b =>
+                {
+                    b.HasOne("foodbooks.Models.Business", "business")
+                        .WithMany("FeedBacks")
+                        .HasForeignKey("BusinessId");
+
+                    b.HasOne("foodbooks.Models.Category", "category")
+                        .WithMany("FeedBacks")
+                        .HasForeignKey("CategoryId");
+
+                    b.HasOne("foodbooks.Models.Question", "questions")
+                        .WithMany("FeedBacks")
+                        .HasForeignKey("QuestionId");
+
+                    b.HasOne("foodbooks.Models.Feedback", "feedback")
+                        .WithMany("customerFeedBacks")
+                        .HasForeignKey("feedbackId");
+
+                    b.Navigation("business");
+
+                    b.Navigation("category");
+
+                    b.Navigation("feedback");
+
+                    b.Navigation("questions");
+                });
+
+            modelBuilder.Entity("foodbooks.Models.Question", b =>
+                {
+                    b.HasOne("foodbooks.Models.Business", "business")
+                        .WithMany("Questions")
+                        .HasForeignKey("BusinessId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("foodbooks.Models.Category", "category")
+                        .WithMany("Questions")
+                        .HasForeignKey("CategoryId");
+
+                    b.Navigation("business");
+
+                    b.Navigation("category");
+                });
+
+            modelBuilder.Entity("foodbooks.Models.QuestionOptions", b =>
+                {
+                    b.HasOne("foodbooks.Models.Question", "questions")
+                        .WithMany("questionOptions")
+                        .HasForeignKey("questionsId");
+
+                    b.Navigation("questions");
+                });
+
+            modelBuilder.Entity("foodbooks.Models.Business", b =>
+                {
+                    b.Navigation("Categories");
+
+                    b.Navigation("FeedBacks");
+
+                    b.Navigation("Questions");
+                });
+
+            modelBuilder.Entity("foodbooks.Models.Category", b =>
+                {
+                    b.Navigation("FeedBacks");
+
+                    b.Navigation("Questions");
+                });
+
+            modelBuilder.Entity("foodbooks.Models.Feedback", b =>
+                {
+                    b.Navigation("customerFeedBacks");
+                });
+
+            modelBuilder.Entity("foodbooks.Models.Question", b =>
+                {
+                    b.Navigation("FeedBacks");
+
+                    b.Navigation("questionOptions");
                 });
 #pragma warning restore 612, 618
         }

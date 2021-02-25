@@ -12,12 +12,10 @@ namespace foodbooks.Repository
     public class AccountRepository : IAccountRepository
     {
         private readonly UserManager<ApplicationUser> userManager;
-        private readonly ApplicationdbContext applicationdbContext;
         private readonly RoleManager<IdentityRole> roleManager;
         StringBuilder sb = new StringBuilder();
         public AccountRepository(UserManager<ApplicationUser> userManager,ApplicationdbContext applicationdbContext, RoleManager<IdentityRole> roleManager) {
             this.userManager = userManager;
-            this.applicationdbContext = applicationdbContext;
             this.roleManager = roleManager;
         }
         public async Task<ActionResult> ConfirmEmail(string userId, string token)

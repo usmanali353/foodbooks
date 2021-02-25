@@ -16,10 +16,7 @@ namespace foodbooks.Models
         public string QuestionOptionText { get; set; }
         [Required]
         public double Rating { get; set; }
-        [Required]
-        public int QuestionId { get; set; }
-        [ForeignKey(nameof(QuestionId))]
-        [InverseProperty(nameof(Question.questionOptions))]
+       
         public virtual Question questions { get; set; }
     }
 }

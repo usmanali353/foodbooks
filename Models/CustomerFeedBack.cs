@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -8,28 +7,31 @@ using System.Threading.Tasks;
 
 namespace foodbooks.Models
 {
-    public class Question
-    {   [Key]
+    public class CustomerFeedBack
+    {
+        [Key]
         public int Id { get; set; }
-        [Required]
-        public string QuestionText { get; set; }
-        [Required]
-        public int QuestionType { get; set; }
-        [Required]
+
+        public int? QuestionId { get; set; }
+        [ForeignKey(nameof(QuestionId))]
+        [InverseProperty(nameof(Question.FeedBacks))]
+        public virtual Question questions {get; set;}
         public int? BusinessId { get; set; }
+
         [ForeignKey(nameof(BusinessId))]
-        [InverseProperty(nameof(Business.Questions))]
+        [InverseProperty(nameof(Business.FeedBacks))]
         public virtual Business business { get; set; }
-       
+
         public int? CategoryId { get; set; }
 
         [ForeignKey(nameof(CategoryId))]
-        [InverseProperty(nameof(Category.Questions))]
+        [InverseProperty(nameof(Category.FeedBacks))]
         public virtual Category category { get; set; }
-        
-        public List<QuestionOptions> questionOptions { get; set;}
 
-        [JsonIgnore]
-        public List<CustomerFeedBack> FeedBacks { get; set; }
+        public double Rating { get; set; }
+
+        public virtual Feedback feedback { get; set; }
+
+        public DateTime? dateTime { get; set; }
     }
 }
