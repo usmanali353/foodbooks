@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -39,6 +40,10 @@ namespace foodbooks.Models
         public double OverallRating { get; set; }
 
         public bool isVisible { get; set; }
+        [Required]
+        public int BusinessTypeId { get; set; }
+  
+        public virtual BusinessType businessType { get; set; }
 
         [JsonIgnore]
         public List<Category> Categories { get; set; }
@@ -48,5 +53,8 @@ namespace foodbooks.Models
 
         [JsonIgnore]
         public List<CustomerFeedBack> FeedBacks { get; set; }
+
+        [JsonIgnore]
+        public virtual List<Subcategory> Subcategories { get; set; }
     }
 }

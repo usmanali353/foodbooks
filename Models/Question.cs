@@ -16,17 +16,17 @@ namespace foodbooks.Models
         [Required]
         public int QuestionType { get; set; }
         [Required]
-        public int? BusinessId { get; set; }
-        [ForeignKey(nameof(BusinessId))]
-        [InverseProperty(nameof(Business.Questions))]
-        public virtual Business business { get; set; }
+        public int BusinessId { get; set; }
        
-        public int? CategoryId { get; set; }
+        public virtual Business business { get; set; }
+        [Required]
+        public int CategoryId { get; set; }
 
-        [ForeignKey(nameof(CategoryId))]
-        [InverseProperty(nameof(Category.Questions))]
         public virtual Category category { get; set; }
+        [Required]
+        public int SubCategoryId { get; set; }
         
+        public virtual Subcategory subcategory { get; set; }
         public List<QuestionOptions> questionOptions { get; set;}
 
         [JsonIgnore]

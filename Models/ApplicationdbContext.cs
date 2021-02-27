@@ -19,6 +19,8 @@ namespace foodbooks.Models
         public DbSet<QuestionOptions> QuestionOptions { get; set; }
         public DbSet<Feedback> Feedbacks { get; set; }
         public DbSet<CustomerFeedBack> CustomerFeedBacks { get; set; }
+        public DbSet<BusinessType> BusinessTypes { get; set; }
+        public DbSet<Subcategory> Subcategories { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             base.OnConfiguring(optionsBuilder);

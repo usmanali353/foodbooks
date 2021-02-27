@@ -3,6 +3,7 @@ using foodbooks.IRepository;
 using foodbooks.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,14 +22,33 @@ namespace foodbooks.Repository
         }
         public async Task<ActionResult> AddBusiness(Business business)
         {
-            if (userManager.FindByIdAsync(business.OwnerId) != null)
+            if (await userManager.FindByIdAsync(business.OwnerId) != null)
             {
-                await context.Businesses.AddAsync(business);
+                context.Businesses.Add(business);
+                await context.SaveChangesAsync();
                 return new OkObjectResult(new { message = "Business Added Sucessfully" });
             }
             else
-            
             return new BadRequestObjectResult(new {message ="Invalid Owner Id" });
+        }
+
+        public Task<ActionResult> ChangeVisibility(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<ActionResult<Business>> GetBusinessById(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<ActionResult<IEnumerable<Business>>> GetBusinessByOwner(string OwnerId)
+        {
+            if (OwnerId!=null&&await userManager.FindByIdAsync(OwnerId) != null) 
+            {
+             return new OkObjectResult(await context.Businesses.Where(b => b.OwnerId == OwnerId).Include(bt=>bt.businessType).ToListAsync());
+            }else
+             return new BadRequestObjectResult(new { message = "Invalid Owner Id" });
         }
     }
 }

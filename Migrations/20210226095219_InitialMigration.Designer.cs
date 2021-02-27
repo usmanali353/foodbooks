@@ -10,7 +10,7 @@ using foodbooks.Models;
 namespace foodbooks.Migrations
 {
     [DbContext(typeof(ApplicationdbContext))]
-    [Migration("20210225112245_InitialMigration")]
+    [Migration("20210226095219_InitialMigration")]
     partial class InitialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -236,6 +236,9 @@ namespace foodbooks.Migrations
                     b.Property<string>("Address")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("BusinessTypeId")
+                        .HasColumnType("int");
+
                     b.Property<TimeSpan?>("ClosingTime")
                         .HasColumnType("time");
 
@@ -281,7 +284,27 @@ namespace foodbooks.Migrations
 
                     b.HasKey("id");
 
+                    b.HasIndex("BusinessTypeId");
+
                     b.ToTable("Businesses");
+                });
+
+            modelBuilder.Entity("foodbooks.Models.BusinessType", b =>
+                {
+                    b.Property<int>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<bool>("IsVisible")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("id");
+
+                    b.ToTable("BusinessTypes");
                 });
 
             modelBuilder.Entity("foodbooks.Models.Category", b =>
@@ -291,7 +314,7 @@ namespace foodbooks.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int?>("BusinessId")
+                    b.Property<int>("BusinessId")
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
@@ -314,17 +337,20 @@ namespace foodbooks.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int?>("BusinessId")
+                    b.Property<int>("BusinessId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("CategoryId")
+                    b.Property<int>("CategoryId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("QuestionId")
+                    b.Property<int>("QuestionId")
                         .HasColumnType("int");
 
                     b.Property<double>("Rating")
                         .HasColumnType("float");
+
+                    b.Property<int>("SubcategoryId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("dateTime")
                         .HasColumnType("datetime2");
@@ -340,6 +366,8 @@ namespace foodbooks.Migrations
 
                     b.HasIndex("QuestionId");
 
+                    b.HasIndex("SubcategoryId");
+
                     b.HasIndex("feedbackId");
 
                     b.ToTable("CustomerFeedBacks");
@@ -352,10 +380,16 @@ namespace foodbooks.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<string>("Comment")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("CustomerName")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Email")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Image")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<double?>("OverallRating")
@@ -382,11 +416,10 @@ namespace foodbooks.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int?>("BusinessId")
-                        .IsRequired()
+                    b.Property<int>("BusinessId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("CategoryId")
+                    b.Property<int>("CategoryId")
                         .HasColumnType("int");
 
                     b.Property<string>("QuestionText")
@@ -396,11 +429,16 @@ namespace foodbooks.Migrations
                     b.Property<int>("QuestionType")
                         .HasColumnType("int");
 
+                    b.Property<int>("SubCategoryId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("BusinessId");
 
                     b.HasIndex("CategoryId");
+
+                    b.HasIndex("SubCategoryId");
 
                     b.ToTable("Questions");
                 });
@@ -412,6 +450,9 @@ namespace foodbooks.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<int>("QuestionId")
+                        .HasColumnType("int");
+
                     b.Property<string>("QuestionOptionText")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -419,14 +460,40 @@ namespace foodbooks.Migrations
                     b.Property<double>("Rating")
                         .HasColumnType("float");
 
-                    b.Property<int?>("questionsId")
-                        .HasColumnType("int");
-
                     b.HasKey("QuestionOptionId");
 
-                    b.HasIndex("questionsId");
+                    b.HasIndex("QuestionId");
 
                     b.ToTable("QuestionOptions");
+                });
+
+            modelBuilder.Entity("foodbooks.Models.Subcategory", b =>
+                {
+                    b.Property<int>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("BusinessId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("CategoryId")
+                        .IsRequired()
+                        .HasColumnType("int");
+
+                    b.Property<bool>("isVisible")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("id");
+
+                    b.HasIndex("BusinessId");
+
+                    b.HasIndex("CategoryId");
+
+                    b.ToTable("Subcategories");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -480,11 +547,24 @@ namespace foodbooks.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("foodbooks.Models.Business", b =>
+                {
+                    b.HasOne("foodbooks.Models.BusinessType", "businessType")
+                        .WithMany("businesses")
+                        .HasForeignKey("BusinessTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("businessType");
+                });
+
             modelBuilder.Entity("foodbooks.Models.Category", b =>
                 {
                     b.HasOne("foodbooks.Models.Business", "business")
                         .WithMany("Categories")
-                        .HasForeignKey("BusinessId");
+                        .HasForeignKey("BusinessId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("business");
                 });
@@ -493,15 +573,27 @@ namespace foodbooks.Migrations
                 {
                     b.HasOne("foodbooks.Models.Business", "business")
                         .WithMany("FeedBacks")
-                        .HasForeignKey("BusinessId");
+                        .HasForeignKey("BusinessId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("foodbooks.Models.Category", "category")
                         .WithMany("FeedBacks")
-                        .HasForeignKey("CategoryId");
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("foodbooks.Models.Question", "questions")
                         .WithMany("FeedBacks")
-                        .HasForeignKey("QuestionId");
+                        .HasForeignKey("QuestionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("foodbooks.Models.Subcategory", "subCategory")
+                        .WithMany("FeedBacks")
+                        .HasForeignKey("SubcategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("foodbooks.Models.Feedback", "feedback")
                         .WithMany("customerFeedBacks")
@@ -514,6 +606,8 @@ namespace foodbooks.Migrations
                     b.Navigation("feedback");
 
                     b.Navigation("questions");
+
+                    b.Navigation("subCategory");
                 });
 
             modelBuilder.Entity("foodbooks.Models.Question", b =>
@@ -526,20 +620,51 @@ namespace foodbooks.Migrations
 
                     b.HasOne("foodbooks.Models.Category", "category")
                         .WithMany("Questions")
-                        .HasForeignKey("CategoryId");
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("foodbooks.Models.Subcategory", "subcategory")
+                        .WithMany("Questions")
+                        .HasForeignKey("SubCategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("business");
 
                     b.Navigation("category");
+
+                    b.Navigation("subcategory");
                 });
 
             modelBuilder.Entity("foodbooks.Models.QuestionOptions", b =>
                 {
                     b.HasOne("foodbooks.Models.Question", "questions")
                         .WithMany("questionOptions")
-                        .HasForeignKey("questionsId");
+                        .HasForeignKey("QuestionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("questions");
+                });
+
+            modelBuilder.Entity("foodbooks.Models.Subcategory", b =>
+                {
+                    b.HasOne("foodbooks.Models.Business", "business")
+                        .WithMany("Subcategories")
+                        .HasForeignKey("BusinessId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("foodbooks.Models.Category", "category")
+                        .WithMany("Subcategories")
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("business");
+
+                    b.Navigation("category");
                 });
 
             modelBuilder.Entity("foodbooks.Models.Business", b =>
@@ -549,6 +674,13 @@ namespace foodbooks.Migrations
                     b.Navigation("FeedBacks");
 
                     b.Navigation("Questions");
+
+                    b.Navigation("Subcategories");
+                });
+
+            modelBuilder.Entity("foodbooks.Models.BusinessType", b =>
+                {
+                    b.Navigation("businesses");
                 });
 
             modelBuilder.Entity("foodbooks.Models.Category", b =>
@@ -556,6 +688,8 @@ namespace foodbooks.Migrations
                     b.Navigation("FeedBacks");
 
                     b.Navigation("Questions");
+
+                    b.Navigation("Subcategories");
                 });
 
             modelBuilder.Entity("foodbooks.Models.Feedback", b =>
@@ -568,6 +702,13 @@ namespace foodbooks.Migrations
                     b.Navigation("FeedBacks");
 
                     b.Navigation("questionOptions");
+                });
+
+            modelBuilder.Entity("foodbooks.Models.Subcategory", b =>
+                {
+                    b.Navigation("FeedBacks");
+
+                    b.Navigation("Questions");
                 });
 #pragma warning restore 612, 618
         }

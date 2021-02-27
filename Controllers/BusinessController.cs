@@ -1,10 +1,13 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using foodbooks.Models;
+using Microsoft.AspNetCore.Authorization;
+using foodbooks.IRepository;
 
 namespace foodbooks.Controllers
 {
@@ -12,36 +15,96 @@ namespace foodbooks.Controllers
     [ApiController]
     public class BusinessController : ControllerBase
     {
-        // GET: api/<BusinessController>
-        [HttpGet]
-        public IEnumerable<string> Get()
+        private readonly ApplicationdbContext _context;
+        private readonly IBusinessRepository repository;
+        public BusinessController(ApplicationdbContext context, IBusinessRepository repository)
         {
-            return new string[] { "value1", "value2" };
+            _context = context;
+            this.repository = repository;
         }
 
-        // GET api/<BusinessController>/5
+        // GET: api/Business
+        [HttpGet,Route("GetBusinessByOwner/{id}")]
+        public async Task<ActionResult<IEnumerable<Business>>> GetBusinesses(string id)
+        {
+            return await repository.GetBusinessByOwner(id);
+        }
+
+        // GET: api/Business/5
         [HttpGet("{id}")]
-        public string Get(int id)
+        public async Task<ActionResult<Business>> GetBusiness(int id)
         {
-            return "value";
+            var business = await _context.Businesses.FindAsync(id);
+
+            if (business == null)
+            {
+                return NotFound();
+            }
+
+            return business;
         }
 
-        // POST api/<BusinessController>
-        [HttpPost]
-        public void Post([FromBody] string value)
-        {
-        }
-
-        // PUT api/<BusinessController>/5
+        // PUT: api/Business/5
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        public async Task<IActionResult> PutBusiness(int id, Business business)
         {
+            if (id != business.id)
+            {
+                return BadRequest();
+            }
+
+            _context.Entry(business).State = EntityState.Modified;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!BusinessExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return NoContent();
         }
 
-        // DELETE api/<BusinessController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
+        // POST: api/Business
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPost,Route("CreateBusiness")]
+        public async Task<ActionResult<Business>> PostBusiness(Business business)
         {
+            //_context.Businesses.Add(business);
+            //await _context.SaveChangesAsync();
+
+            return await repository.AddBusiness(business);
+        }
+
+        // DELETE: api/Business/5
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteBusiness(int id)
+        {
+            var business = await _context.Businesses.FindAsync(id);
+            if (business == null)
+            {
+                return NotFound();
+            }
+
+            _context.Businesses.Remove(business);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+        private bool BusinessExists(int id)
+        {
+            return _context.Businesses.Any(e => e.id == id);
         }
     }
 }

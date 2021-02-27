@@ -11,23 +11,22 @@ namespace foodbooks.Models
     {
         [Key]
         public int Id { get; set; }
+        [Required]
+        public int QuestionId { get; set; }
+       
+        public virtual Question questions { get; set; }
+        [Required]
+        public int BusinessId { get; set; }
 
-        public int? QuestionId { get; set; }
-        [ForeignKey(nameof(QuestionId))]
-        [InverseProperty(nameof(Question.FeedBacks))]
-        public virtual Question questions {get; set;}
-        public int? BusinessId { get; set; }
-
-        [ForeignKey(nameof(BusinessId))]
-        [InverseProperty(nameof(Business.FeedBacks))]
         public virtual Business business { get; set; }
+        [Required]
+        public int CategoryId { get; set; }
 
-        public int? CategoryId { get; set; }
-
-        [ForeignKey(nameof(CategoryId))]
-        [InverseProperty(nameof(Category.FeedBacks))]
         public virtual Category category { get; set; }
-
+        [Required]
+        public int SubcategoryId {get; set;}
+       
+        public virtual Subcategory subCategory { get; set; }
         public double Rating { get; set; }
 
         public virtual Feedback feedback { get; set; }

@@ -11,7 +11,7 @@ namespace foodbooks.Models
     {
         [Key]
         public int Id { get; set; }
-
+        [Required]
         public string CustomerName { get; set; }
         [Phone]
         public string Phone { get; set; }
@@ -23,6 +23,22 @@ namespace foodbooks.Models
         public DateTime? dateTime { get; set; }
 
         public bool isVisible { get; set; }
+
+        public string Comment { get; set; }
+
+        public string Image { get; set; }
+        [Required]
+        public int BusinessId { get; set; }
+
+        public virtual Business business { get; set; }
+        [Required]
+        public int CategoryId { get; set; }
+
+        public virtual Category category { get; set; }
+        [Required]
+        public int SubcategoryId { get; set; }
+
+        public virtual Subcategory subCategory { get; set; }
 
         public List<CustomerFeedBack> customerFeedBacks { get; set; }
     }

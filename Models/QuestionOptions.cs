@@ -16,7 +16,11 @@ namespace foodbooks.Models
         public string QuestionOptionText { get; set; }
         [Required]
         public double Rating { get; set; }
-       
+        
+        public int QuestionId { get; set; }
+
         public virtual Question questions { get; set; }
+
+        public bool IsVisible { get; set; }
     }
 }
