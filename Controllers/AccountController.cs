@@ -31,7 +31,7 @@ namespace foodbooks.Controllers
         }
         [AllowAnonymous]
         [HttpPost,Route("Register")]
-        public async Task<ActionResult> SignUp(RegisterDto registerViewModel)
+        public async Task<ActionResult> SignUp(RegisterViewModel registerViewModel)
         {
             var user = new ApplicationUser
             {
@@ -50,20 +50,22 @@ namespace foodbooks.Controllers
                 var token = await userManager.GenerateEmailConfirmationTokenAsync(user);
                 var confirmationLink = Url.Action("ConfirmEmail", "Account",
                     new { userId = user.Id, token = token }, Request.Scheme);
-                if(!await roleManager.RoleExistsAsync("Admin")) 
+                var role = await roleManager.FindByIdAsync(registerViewModel.roleId);
+                if (role!=null) 
                 {
-                    await roleManager.CreateAsync(new IdentityRole { Name = "Admin" });
+                    var roleAddingResult = await userManager.AddToRoleAsync(user,role.Name);
+                    if (roleAddingResult.Succeeded)
+                    {
+                        utils.sendMail(registerViewModel.email, confirmationLink, "Please Click Below Button to Verify your email and continue using FoodBooks", "Please Verify your Email to continue using foodBooks");
+                        return new OkObjectResult("verification Email is sent on your mentioned email address please verify to Continue");
+                    }
+                    else
+                        foreach (var error in roleAddingResult.Errors)
+                            sb.Append(error.Description + "\n");
+                    return new BadRequestObjectResult(sb.ToString());
                 }
               
-               var roleAddingResult= await userManager.AddToRoleAsync(user, "Admin");
-                if (roleAddingResult.Succeeded) 
-                {
-                    utils.sendMail(registerViewModel.email, confirmationLink, "Please Click Below Button to Verify your email and continue using FoodBooks", "Please Verify your Email to continue using foodBooks");
-                    return new OkObjectResult("verification Email is sent on your mentioned email address please verify to Continue");
-                }else
-                    foreach (var error in roleAddingResult.Errors)
-                        sb.Append(error.Description + "\n");
-                return new BadRequestObjectResult(sb.ToString());
+              
 
             }
 
@@ -81,10 +83,15 @@ namespace foodbooks.Controllers
         }
         [AllowAnonymous]
         [HttpPost, Route("Login")]
-        public async Task<ActionResult> SignIn(LoginDto loginViewmodel) 
+        public async Task<ActionResult> SignIn(LoginViewModel loginViewmodel) 
         {
             
             return await _accountRepository.SignIn(loginViewmodel);
+        }
+        [HttpPost,Route("AddRoles/{name}")]
+        public async Task<ActionResult> AddRole(string name) 
+        {
+            return await _accountRepository.CreateRole(name);
         }
     }
 }

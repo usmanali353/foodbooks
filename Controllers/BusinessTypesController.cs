@@ -85,7 +85,7 @@ namespace foodbooks.Controllers
         }
 
         // DELETE: api/BusinessTypes/5
-        [HttpDelete("{id}")]
+        [HttpGet, Route("ChangeVisibility/{id}")]
         public async Task<IActionResult> DeleteBusinessType(int id)
         {
             var businessType = await _context.BusinessTypes.FindAsync(id);
@@ -93,8 +93,8 @@ namespace foodbooks.Controllers
             {
                 return NotFound();
             }
-
-            _context.BusinessTypes.Remove(businessType);
+            businessType.IsVisible = !businessType.IsVisible;
+            _context.BusinessTypes.Attach(businessType).Property(x => x.IsVisible).IsModified = true;
             await _context.SaveChangesAsync();
 
             return NoContent();

@@ -9,9 +9,9 @@ namespace foodbooks.IRepository
 {
    public interface IAccountRepository
     {
-        Task<ActionResult> SignIn(LoginDto loginViewModel);
+        Task<ActionResult> SignIn(LoginViewModel loginViewModel);
         Task<ActionResult> ConfirmEmail(string userId,string token);
-
+        Task<ActionResult> CreateRole(string name);
     }
 
 }

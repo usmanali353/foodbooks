@@ -106,7 +106,7 @@ namespace foodbooks.Controllers
         }
 
         // DELETE: api/Feedback/5
-        [HttpDelete("{id}")]
+        [HttpGet,Route("ChangeVisibility/{id}")]
         public async Task<IActionResult> DeleteFeedback(int id)
         {
             var feedback = await _context.Feedbacks.FindAsync(id);
@@ -115,10 +115,10 @@ namespace foodbooks.Controllers
                 return NotFound();
             }
 
-            _context.Feedbacks.Remove(feedback);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            feedback.isVisible = !feedback.isVisible;
+            _context.Feedbacks.Attach(feedback).Property(x => x.isVisible).IsModified = true;
+           await _context.SaveChangesAsync();
+            return Ok();
         }
 
         private bool FeedbackExists(int id)

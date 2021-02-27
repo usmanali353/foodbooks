@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace foodbooks.Models
 {
-    public class RegisterDto
+    public class RegisterViewModel
     {
         [Required]
         public string name { get; set; }
@@ -22,5 +22,7 @@ namespace foodbooks.Models
         public string country { get; set; }
         [Required]
         public string city { get; set; }
+        [Required]
+        public string roleId { get; set; }
     }
 }

@@ -91,6 +91,7 @@ namespace foodbooks.Controllers
         [HttpPost]
         public async Task<ActionResult<Question>> PostQuestion(Question question)
         {
+            question.IsVisible = true;
             _context.Questions.Add(question);
             await _context.SaveChangesAsync();
 
@@ -98,7 +99,7 @@ namespace foodbooks.Controllers
         }
 
         // DELETE: api/Questions1/5
-        [HttpDelete("{id}")]
+        [HttpGet,Route("ChangeVisibility/{id}")]
         public async Task<IActionResult> DeleteQuestion(int id)
         {
             var question = await _context.Questions.FindAsync(id);
@@ -106,11 +107,11 @@ namespace foodbooks.Controllers
             {
                 return NotFound();
             }
-
-            _context.Questions.Remove(question);
+            question.IsVisible = !question.IsVisible;
+            _context.Questions.Attach(question).Property(x => x.IsVisible).IsModified = true;
             await _context.SaveChangesAsync();
 
-            return NoContent();
+            return Ok();
         }
 
         private bool QuestionExists(int id)

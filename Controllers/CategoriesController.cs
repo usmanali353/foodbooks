@@ -86,7 +86,7 @@ namespace foodbooks.Controllers
         }
 
         // DELETE: api/Categories/5
-        [HttpDelete("{id}")]
+        [HttpGet, Route("ChangeVisibility/{id}")]
         public async Task<IActionResult> DeleteCategory(int id)
         {
             var category = await _context.Categories.FindAsync(id);
@@ -94,11 +94,10 @@ namespace foodbooks.Controllers
             {
                 return NotFound();
             }
-
-            _context.Categories.Remove(category);
+            category.isVisible = !category.isVisible;
+            _context.Categories.Attach(category).Property(x => x.isVisible).IsModified = true;
             await _context.SaveChangesAsync();
-
-            return NoContent();
+            return Ok();
         }
 
         private bool CategoryExists(int id)

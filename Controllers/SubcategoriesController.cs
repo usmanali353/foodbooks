@@ -90,6 +90,7 @@ namespace foodbooks.Controllers
         [HttpPost]
         public async Task<ActionResult<Subcategory>> PostSubcategory(Subcategory subcategory)
         {
+            subcategory.isVisible = true;
             _context.Subcategories.Add(subcategory);
             await _context.SaveChangesAsync();
 
@@ -97,7 +98,7 @@ namespace foodbooks.Controllers
         }
 
         // DELETE: api/Subcategories/5
-        [HttpDelete("{id}")]
+        [HttpGet, Route("ChangeVisibility/{id}")]
         public async Task<IActionResult> DeleteSubcategory(int id)
         {
             var subcategory = await _context.Subcategories.FindAsync(id);
@@ -105,11 +106,10 @@ namespace foodbooks.Controllers
             {
                 return NotFound();
             }
-
-            _context.Subcategories.Remove(subcategory);
+            subcategory.isVisible = !subcategory.isVisible;
+            _context.Subcategories.Attach(subcategory).Property(x => x.isVisible).IsModified = true;
             await _context.SaveChangesAsync();
-
-            return NoContent();
+            return Ok();
         }
 
         private bool SubcategoryExists(int id)
