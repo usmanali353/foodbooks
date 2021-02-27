@@ -25,7 +25,7 @@ namespace foodbooks.Controllers
             _logger = logger;
         }
 
-        [HttpGet]
+        [HttpGet] [Authorize(Roles ="Admin")]
         public IEnumerable<WeatherForecast> Get()
         {
             var rng = new Random();

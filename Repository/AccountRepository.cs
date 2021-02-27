@@ -44,7 +44,7 @@ namespace foodbooks.Repository
                 if(await userManager.IsEmailConfirmedAsync(user)) 
                 {
                     var RolesList = await userManager.GetRolesAsync(user);
-                    return new OkObjectResult(new { token = utils.GenerateAccessToken(user.Id, user), message = "Login Sucessful", roles = RolesList });
+                    return new OkObjectResult(new { token = utils.GenerateAccessToken(user.Id, user,RolesList), message = "Login Sucessful", roles = RolesList });
                 }else
                     return new BadRequestObjectResult("Email is not Confirmed");
             }

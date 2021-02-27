@@ -46,49 +46,73 @@ namespace foodbooks
             {
                 options.SignIn.RequireConfirmedEmail = true;
             }).AddEntityFrameworkStores<ApplicationdbContext>().AddDefaultTokenProviders();
-           
-            
-            var jwtSection = Configuration.GetSection("JWTSettings");
-            services.Configure<JWTSettings>(jwtSection);
-            var appSettings = jwtSection.Get<JWTSettings>();
-            var key = Encoding.ASCII.GetBytes(appSettings.SecretKey);
-            services.AddAuthentication(x =>
 
+            services.AddAuthentication(options =>
             {
-
-                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-
-                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
             })
 
-            .AddJwtBearer(x =>
+           // Adding Jwt Bearer  
+           .AddJwtBearer(options =>
+           {
+               options.SaveToken = true;
+               options.RequireHttpsMetadata = false;
+               options.TokenValidationParameters = new TokenValidationParameters()
+               {
+                   ValidateIssuer = true,
+                   ValidateAudience = true,
+                   ValidateLifetime =true,
+                   ValidateIssuerSigningKey=true,
+                   ClockSkew = TimeSpan.Zero,
+                   ValidAudience = "SurveyApp",
+                   ValidIssuer = "SurveyApp",
+                   IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("SurveyAppjwtTokenforauthorization"))
+               };
+           });
 
-            {
+            //var jwtSection = Configuration.GetSection("JWTSettings");
+            //services.Configure<JWTSettings>(jwtSection);
+            //var appSettings = jwtSection.Get<JWTSettings>();
+            //var key = Encoding.ASCII.GetBytes(appSettings.SecretKey);
+            //services.AddAuthentication(x =>
 
-                x.RequireHttpsMetadata = true;
+            //{
 
-                x.SaveToken = true;
+            //    x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
 
-                x.TokenValidationParameters = new TokenValidationParameters
+            //    x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
 
-                {
+            //})
 
-                    ValidateIssuerSigningKey = true,
-                    ValidateLifetime = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(key),
+            //.AddJwtBearer(x =>
 
-                    ValidateIssuer = true,
+            //{
 
-                    ValidateAudience = true,
+            //    x.RequireHttpsMetadata = true;
 
-            
+            //    x.SaveToken = true;
 
-                    ClockSkew = TimeSpan.Zero
+            //    x.TokenValidationParameters = new TokenValidationParameters
 
-                };
+            //    {
 
-            });
+            //        ValidateIssuerSigningKey = true,
+            //        ValidateLifetime = true,
+            //        IssuerSigningKey = new SymmetricSecurityKey(key),
+
+            //        ValidateIssuer = true,
+
+            //        ValidateAudience = true,
+
+
+
+            //        ClockSkew = TimeSpan.Zero
+
+            //    };
+
+            //});
             services.AddControllers().AddNewtonsoftJson(options =>
     options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
            
@@ -96,7 +120,32 @@ namespace foodbooks
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "foodbooks", Version = "v1" });
+                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
+                {
+                    Name = "Authorization",
+                    Type = SecuritySchemeType.ApiKey,
+                    Scheme = "Bearer",
+                    BearerFormat = "JWT",
+                    In = ParameterLocation.Header,
+                    Description = "Enter 'Bearer' [space] and then your valid token in the text input below.\r\n\r\nExample: \"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9\"",
+                });
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                          new OpenApiSecurityScheme
+                            {
+                                Reference = new OpenApiReference
+                                {
+                                    Type = ReferenceType.SecurityScheme,
+                                    Id = "Bearer"
+                                }
+                            },
+                            new string[] {}
+
+                    }
+                });
             });
+        
             
            
             InitializeRepositories(services);
@@ -121,7 +170,7 @@ namespace foodbooks
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapControllers();
+                endpoints.MapControllers().RequireAuthorization();
             });
         }
 

@@ -24,10 +24,7 @@ namespace foodbooks.Controllers
         [HttpGet,Route("GetCategoriesByBusiness/{id}")]
         public async Task<ActionResult<IEnumerable<Category>>> GetCategories(int id)
         {
-            if (id == null)
-            {
-                return BadRequest(new { message = "Invalid Business Id" });
-            }
+           
             return await _context.Categories.Where(bid=>bid.BusinessId==id).ToListAsync();
         }
 
@@ -81,6 +78,7 @@ namespace foodbooks.Controllers
         [HttpPost]
         public async Task<ActionResult<Category>> PostCategory(Category category)
         {
+            category.isVisible = true;
             _context.Categories.Add(category);
             await _context.SaveChangesAsync();
 

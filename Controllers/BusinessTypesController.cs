@@ -77,6 +77,7 @@ namespace foodbooks.Controllers
         [HttpPost]
         public async Task<ActionResult<BusinessType>> PostBusinessType(BusinessType businessType)
         {
+            businessType.IsVisible = true;
             _context.BusinessTypes.Add(businessType);
             await _context.SaveChangesAsync();
 

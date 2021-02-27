@@ -22,5 +22,7 @@ namespace foodbooks.Models
         public virtual Question questions { get; set; }
 
         public bool IsVisible { get; set; }
+        [JsonIgnore]
+        public List<CustomerFeedBack> customerFeedBacks { get; set; }
     }
 }

@@ -34,19 +34,27 @@ namespace foodbooks.Utils
             smtp.Disconnect(true);
         }
 
-        public static string GenerateAccessToken(string userId, ApplicationUser user)
+        public static string GenerateAccessToken(string userId, ApplicationUser user,IList<string> RolesList)
 
         {
 
             var tokenHandler = new JwtSecurityTokenHandler();
 
-            var key = new SymmetricSecurityKey(Encoding.ASCII.GetBytes("FoodBooksJwtToken"));
-            
+            var key = new SymmetricSecurityKey(Encoding.ASCII.GetBytes("SurveyAppjwtTokenforauthorization"));
+            var authClaims = new List<Claim>
+                {
+                    new Claim(ClaimTypes.Name, user.UserName),
+                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                };
+            foreach (var userRole in RolesList)
+            {
+                authClaims.Add(new Claim(ClaimTypes.Role, userRole));
+            }
             var token = new JwtSecurityToken(
-                    issuer: "FoodBooks",
-                    audience: "FoodBooks",
+                    issuer: "SurveyApp",
+                    audience: "SurveyApp",
                     expires: DateTime.Now.AddHours(3),
-               
+                    claims:authClaims,
                     signingCredentials: new SigningCredentials(key, SecurityAlgorithms.HmacSha256)
                     );
             token.Payload["UserInfo"] = new {id =userId,name=user.name,email=user.Email,phone=user.PhoneNumber,city=user.city,country=user.country };

@@ -21,10 +21,21 @@ namespace foodbooks.Controllers
         }
 
         // GET: api/Subcategories
-        [HttpGet,Route("GetSubCategoryByCategoryorBusiness/{id}")]
-        public async Task<ActionResult<IEnumerable<Subcategory>>> GetSubcategories(int id)
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<Subcategory>>> GetSubcategories([FromQuery]int? BusinessId,[FromQuery] int? CategoryId)
         {
-            return await _context.Subcategories.Where(cid=>cid.CategoryId==id||cid.BusinessId==id).ToListAsync();
+            if (BusinessId != null) 
+            {
+                return await _context.Subcategories.Where(cid => cid.BusinessId == BusinessId).ToListAsync();
+            }
+            if (CategoryId != null) 
+            {
+                return await _context.Subcategories.Where(cid => cid.CategoryId == CategoryId).ToListAsync();
+            }
+
+            return await _context.Subcategories.ToListAsync();
+
+
         }
 
     

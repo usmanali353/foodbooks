@@ -23,16 +23,29 @@ namespace foodbooks.Controllers
 
         // GET: api/Questions1
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Question>>> GetQuestions()
+        public async Task<ActionResult<IEnumerable<Question>>> GetQuestions([FromQuery]int? BusinessId,[FromQuery] int? SubCategoryId,[FromQuery] int? CategoryId)
         {
-            return await _context.Questions.Include(op=>op.questionOptions).ToListAsync();
+            if (BusinessId != null)
+            {
+                return await _context.Questions.Include(op => op.questionOptions).Where(b => b.BusinessId == BusinessId).ToListAsync();
+            }
+             if (CategoryId != null)
+            {
+                return await _context.Questions.Include(op => op.questionOptions).Where(b => b.CategoryId == CategoryId).ToListAsync();
+            }
+            if (SubCategoryId != null)
+            {
+                return await _context.Questions.Include(op => op.questionOptions).Where(b => b.SubCategoryId == SubCategoryId).ToListAsync();
+            }
+            else
+                return await _context.Questions.Include(op => op.questionOptions).ToListAsync();
         }
 
         // GET: api/Questions1/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Question>> GetQuestion(int id)
         {
-            var question = await _context.Questions.FindAsync(id);
+            var question = await _context.Questions.Include(op => op.questionOptions).Where(q=>q.Id==id).FirstOrDefaultAsync();
 
             if (question == null)
             {

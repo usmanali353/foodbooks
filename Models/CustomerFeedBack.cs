@@ -27,10 +27,15 @@ namespace foodbooks.Models
         public int SubcategoryId {get; set;}
        
         public virtual Subcategory subCategory { get; set; }
+        [Required]
         public double Rating { get; set; }
 
         public virtual Feedback feedback { get; set; }
 
         public DateTime? dateTime { get; set; }
+        [Required]
+        public int QuestionOptionId { get; set; }
+
+        public virtual QuestionOptions questionOptions { get; set; }
     }
 }

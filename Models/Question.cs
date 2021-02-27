@@ -31,5 +31,7 @@ namespace foodbooks.Models
 
         [JsonIgnore]
         public List<CustomerFeedBack> FeedBacks { get; set; }
+
+        public bool IsVisible { get; set; }
     }
 }
