@@ -34,8 +34,9 @@ namespace foodbooks.Models
 
         public DateTime? dateTime { get; set; }
         [Required]
-        public int QuestionOptionId { get; set; }
-
+        public int QuestionOptionsId { get; set; }
+        [ForeignKey(nameof(QuestionOptionsId))]
+        [InverseProperty(nameof(QuestionOptions.customerFeedBacks))]
         public virtual QuestionOptions questionOptions { get; set; }
     }
 }

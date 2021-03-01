@@ -29,6 +29,9 @@ namespace foodbooks.Models
         public virtual List<Question> Questions { get; set; }
 
         [JsonIgnore]
-        public virtual List<CustomerFeedBack> FeedBacks { get; set; }
+        public virtual List<CustomerFeedBack> CustomerFeedBacks { get; set; }
+
+        [JsonIgnore]
+        public List<Feedback> FeedBacks { get; set; }
     }
 }

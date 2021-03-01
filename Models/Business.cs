@@ -52,7 +52,10 @@ namespace foodbooks.Models
         public List<Question> Questions { get; set; }
 
         [JsonIgnore]
-        public List<CustomerFeedBack> FeedBacks { get; set; }
+        public List<CustomerFeedBack> CustomerFeedBacks { get; set; }
+
+        [JsonIgnore]
+        public List<Feedback> FeedBacks { get; set; }
 
         [JsonIgnore]
         public virtual List<Subcategory> Subcategories { get; set; }

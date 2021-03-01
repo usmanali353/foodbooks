@@ -11,7 +11,7 @@ namespace foodbooks.IRepository
     {
         public Task<ActionResult> AddBusiness(Business business);
         public Task<ActionResult> ChangeVisibility(int id);
-        public Task<ActionResult<IEnumerable<Business>>> GetBusinessByOwner(string OwnerId);
+        public Task<ActionResult<IEnumerable<Business>>> GetBusinessByOwner(string token);
         public Task<ActionResult<Business>> GetBusinessById(int id);
     }
 }

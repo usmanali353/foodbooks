@@ -24,10 +24,10 @@ namespace foodbooks.Controllers
         }
 
         // GET: api/Business
-        [HttpGet,Route("GetBusinessByOwner/{id}")]
-        public async Task<ActionResult<IEnumerable<Business>>> GetBusinesses(string id)
+        [HttpGet,Route("GetBusinessByOwner")]
+        public async Task<ActionResult<IEnumerable<Business>>> GetBusinesses()
         {
-            return await repository.GetBusinessByOwner(id);
+            return await repository.GetBusinessByOwner(Request.Headers["Authorization"].ToString().Replace("Bearer", "").Trim());
         }
 
         // GET: api/Business/5

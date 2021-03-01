@@ -1,4 +1,5 @@
 ﻿using foodbooks.Models;
+using foodbooks.ViewModels;
 using MailKit.Net.Smtp;
 using MailKit.Security;
 using Microsoft.AspNetCore.Identity;
@@ -6,6 +7,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using MimeKit;
 using MimeKit.Text;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
@@ -63,7 +65,6 @@ namespace foodbooks.Utils
 
         }
 
-
         public static List<Dropdown> getQuestionTypes() 
         {
             return new List<Dropdown> 
@@ -73,6 +74,17 @@ namespace foodbooks.Utils
                 new Dropdown{id=3,name ="Dropdown" },
                 new Dropdown{id=4,name="Numbering" }
             };
+        }
+
+        public static UserInfo ParseToken(string token) 
+        {
+            var stream = token;
+            var handler = new JwtSecurityTokenHandler();
+           // var jsonToken = handler.ReadToken(stream);
+            var tokenS = handler.ReadToken(stream) as JwtSecurityToken;
+            TokenPayLoad payload = JsonConvert.DeserializeObject<TokenPayLoad>(tokenS.Payload.SerializeToJson());
+
+            return payload.userInfo;
         }
 
     }

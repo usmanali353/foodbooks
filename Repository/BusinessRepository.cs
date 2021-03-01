@@ -1,5 +1,6 @@
 ﻿using foodbooks.IRepository;
 using foodbooks.Models;
+using foodbooks.Utils;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -43,25 +44,28 @@ namespace foodbooks.Repository
             throw new NotImplementedException();
         }
 
-        public async Task<ActionResult<IEnumerable<Business>>> GetBusinessByOwner(string OwnerId)
+        public async Task<ActionResult<IEnumerable<Business>>> GetBusinessByOwner(string token)
         {
-            var totalFeedBack = 0.0;
-            if (OwnerId!=null&&await userManager.FindByIdAsync(OwnerId) != null) 
+            var totalFeedBack=0.0;
+            if (utils.ParseToken(token).id != null&&await userManager.FindByIdAsync(utils.ParseToken(token).id) != null) 
             {
-                
-                var business = await context.Businesses.Where(b => b.OwnerId == OwnerId).Include(bt => bt.businessType).Include(f=>f.FeedBacks).ToListAsync();
+               
+                var business = await context.Businesses.Where(b => b.OwnerId == utils.ParseToken(token).id).Include(bt => bt.businessType).Include(f=>f.FeedBacks).ToListAsync();
                 for (int i = 0; i < business.Count; i++) 
                 {
                     if (business[i].FeedBacks.Count > 0) 
                     {
                         for (int j = 0; j < business[i].FeedBacks.Count; j++) 
                         {
-                             totalFeedBack += business[i].FeedBacks[j].Rating;
+                           
+                          if(business[i].FeedBacks[j].OverallRating.HasValue)
+                          totalFeedBack += business[i].FeedBacks[j].OverallRating.Value;
+                            
                         }
                         business[i].OverallRating = totalFeedBack / double.Parse(business[i].FeedBacks.Count.ToString());
                     }
                 }
-             return new OkObjectResult(await context.Businesses.Where(b => b.OwnerId == OwnerId).Include(bt=>bt.businessType).ToListAsync());
+             return new OkObjectResult(await context.Businesses.Where(b => b.OwnerId == utils.ParseToken(token).id).Include(bt=>bt.businessType).ToListAsync());
             }else
              return new BadRequestObjectResult(new { message = "Invalid Owner Id" });
         }

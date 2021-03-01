@@ -113,6 +113,7 @@ namespace foodbooks
             //    };
 
             //});
+            services.AddCors();
             services.AddControllers().AddNewtonsoftJson(options =>
     options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
            

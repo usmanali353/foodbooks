@@ -17,7 +17,7 @@ namespace foodbooks.Models
         public int QuestionType { get; set; }
         [Required]
         public int BusinessId { get; set; }
-       
+        
         public virtual Business business { get; set; }
         [Required]
         public int CategoryId { get; set; }

@@ -14,7 +14,7 @@ namespace foodbooks.Controllers
     public class FeedbackController : ControllerBase
     {
         private readonly ApplicationdbContext _context;
-
+        
         public FeedbackController(ApplicationdbContext context)
         {
             _context = context;
@@ -124,6 +124,45 @@ namespace foodbooks.Controllers
         private bool FeedbackExists(int id)
         {
             return _context.Feedbacks.Any(e => e.Id == id);
+        }
+
+        [HttpGet,Route("GetOverallReportOfRating")]
+        public async Task<ActionResult> GetOverallReportOfRating([FromQuery] int? businessId, [FromQuery] int? CategoryId, [FromQuery] int? SubCategoryId) 
+        {
+            var feedback=new List<Feedback>();
+            List<Feedback> NegetiveFeedback = new List<Feedback>();
+            List<Feedback> PositiveFeedback = new List<Feedback>();
+            if (businessId != null) 
+            {
+                 feedback = await _context.Feedbacks.Where(bid => bid.BusinessId == businessId).Include(cf => cf.customerFeedBacks).ThenInclude(cf => cf.questionOptions).ThenInclude(q=>q.questions).ToListAsync();
+            }
+            if (CategoryId != null) 
+            {
+                 feedback = await _context.Feedbacks.Where(bid => bid.CategoryId == CategoryId).Include(cf => cf.customerFeedBacks).ThenInclude(cf => cf.questionOptions).ThenInclude(q => q.questions).ToListAsync();
+            }
+
+            if (SubCategoryId != null) 
+            {
+                feedback = await _context.Feedbacks.Where(bid => bid.SubcategoryId == SubCategoryId).Include(cf => cf.customerFeedBacks).ThenInclude(cf => cf.questionOptions).ThenInclude(q => q.questions).ToListAsync();
+            }
+            
+           
+            if (feedback.Count > 0)
+            {
+                foreach (var f in feedback)
+                {
+                    if (f.OverallRating < 2.5)
+                    {
+                        NegetiveFeedback.Add(f);
+                    }
+                    else
+                        PositiveFeedback.Add(f);
+                }
+                return Ok(new { PositiveFeedBack = PositiveFeedback, NegetiveFeedback = NegetiveFeedback, PositiveFeedbackCount = PositiveFeedback.Count, NegetiveFeedbackCont = NegetiveFeedback.Count });
+            }
+            else
+                return NoContent();
+            
         }
     }
 }
