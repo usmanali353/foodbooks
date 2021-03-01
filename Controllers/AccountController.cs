@@ -88,6 +88,7 @@ namespace foodbooks.Controllers
             
             return await _accountRepository.SignIn(loginViewmodel);
         }
+        [AllowAnonymous]
         [HttpPost,Route("AddRoles/{name}")]
         public async Task<ActionResult> AddRole(string name) 
         {

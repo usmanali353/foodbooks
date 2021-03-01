@@ -96,6 +96,7 @@ namespace foodbooks.Controllers
             foreach(var CustomerFeedBack in feedback.customerFeedBacks) 
             {
                 CustomerFeedBack.dateTime = DateTime.Now;
+                CustomerFeedBack.Rating = CustomerFeedBack.questionOptions.Rating;
                 TotalRatingByCustomer += CustomerFeedBack.Rating;
             }
             feedback.OverallRating = TotalRatingByCustomer / double.Parse(feedback.customerFeedBacks.Count.ToString());
@@ -134,16 +135,16 @@ namespace foodbooks.Controllers
             List<Feedback> PositiveFeedback = new List<Feedback>();
             if (businessId != null) 
             {
-                 feedback = await _context.Feedbacks.Where(bid => bid.BusinessId == businessId).Include(cf => cf.customerFeedBacks).ThenInclude(cf => cf.questionOptions).ThenInclude(q=>q.questions).ToListAsync();
+                 feedback = await _context.Feedbacks.Where(bid => bid.BusinessId == businessId).Include(cf => cf.customerFeedBacks).ThenInclude(cf => cf.questionOptions).ToListAsync();
             }
             if (CategoryId != null) 
             {
-                 feedback = await _context.Feedbacks.Where(bid => bid.CategoryId == CategoryId).Include(cf => cf.customerFeedBacks).ThenInclude(cf => cf.questionOptions).ThenInclude(q => q.questions).ToListAsync();
+                 feedback = await _context.Feedbacks.Where(bid => bid.CategoryId == CategoryId).Include(cf => cf.customerFeedBacks).ThenInclude(cf => cf.questionOptions).ToListAsync();
             }
 
             if (SubCategoryId != null) 
             {
-                feedback = await _context.Feedbacks.Where(bid => bid.SubcategoryId == SubCategoryId).Include(cf => cf.customerFeedBacks).ThenInclude(cf => cf.questionOptions).ThenInclude(q => q.questions).ToListAsync();
+                feedback = await _context.Feedbacks.Where(bid => bid.SubcategoryId == SubCategoryId).Include(cf => cf.customerFeedBacks).ThenInclude(cf => cf.questionOptions).ToListAsync();
             }
             
            

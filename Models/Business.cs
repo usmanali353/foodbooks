@@ -30,7 +30,7 @@ namespace foodbooks.Models
         public TimeSpan? OpeningTime { get; set; }
 
         public TimeSpan? ClosingTime { get; set; }
-        [Required]
+        
         public string OwnerId { get; set; }
 
         public string Image { get; set; }

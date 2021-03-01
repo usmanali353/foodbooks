@@ -21,12 +21,14 @@ namespace foodbooks.Repository
             this.context = context;
             this.userManager = userManager;
         }
-        public async Task<ActionResult> AddBusiness(Business business)
+        public async Task<ActionResult> AddBusiness(Business business,string token)
         {
+            business.isVisible = true;
+            business.OwnerId = utils.ParseToken(token).id;
             if (await userManager.FindByIdAsync(business.OwnerId) != null)
             {
-                business.isVisible = true;
                 context.Businesses.Add(business);
+
                 await context.SaveChangesAsync();
                 return new OkObjectResult(new { message = "Business Added Sucessfully" });
             }

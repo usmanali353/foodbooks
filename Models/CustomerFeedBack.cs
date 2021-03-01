@@ -27,7 +27,7 @@ namespace foodbooks.Models
         public int SubcategoryId {get; set;}
        
         public virtual Subcategory subCategory { get; set; }
-        [Required]
+        
         public double Rating { get; set; }
 
         public virtual Feedback feedback { get; set; }

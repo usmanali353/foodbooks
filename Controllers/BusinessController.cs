@@ -83,7 +83,7 @@ namespace foodbooks.Controllers
             //_context.Businesses.Add(business);
             //await _context.SaveChangesAsync();
 
-            return await repository.AddBusiness(business);
+            return await repository.AddBusiness(business, Request.Headers["Authorization"].ToString().Replace("Bearer", "").Trim());
         }
 
         // DELETE: api/Business/5
