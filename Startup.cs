@@ -113,7 +113,7 @@ namespace foodbooks
             //    };
 
             //});
-            services.AddCors();
+            
             services.AddControllers().AddNewtonsoftJson(options =>
     options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
            
@@ -162,7 +162,12 @@ namespace foodbooks
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "foodbooks v1"));
             }
-            
+            app.UseCors(builder => builder
+    .AllowAnyOrigin()
+    .AllowAnyMethod()
+    .AllowAnyHeader());
+
+
             app.UseRouting();
 
             app.UseAuthentication();

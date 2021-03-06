@@ -1,6 +1,7 @@
 ﻿using foodbooks.IRepository;
 using foodbooks.Models;
 using foodbooks.Utils;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -15,7 +16,8 @@ namespace foodbooks.Repository
     {
        
        private readonly ApplicationdbContext context;
-        private readonly UserManager<ApplicationUser> userManager;
+       private readonly UserManager<ApplicationUser> userManager;
+       private readonly IWebHostEnvironment _env;
         public BusinessRepository(ApplicationdbContext context, UserManager<ApplicationUser> userManager) 
         {
             this.context = context;

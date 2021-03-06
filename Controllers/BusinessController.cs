@@ -34,12 +34,26 @@ namespace foodbooks.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Business>> GetBusiness(int id)
         {
-            var business = await _context.Businesses.FindAsync(id);
+            var totalFeedBack = 0.0;
+            var business = await _context.Businesses.Include(bt=>bt.businessType).Include(f=>f.FeedBacks).Where(bid=>bid.id==id).FirstOrDefaultAsync();
 
             if (business == null)
             {
                 return NotFound();
             }
+            
+                if (business.FeedBacks.Count > 0)
+                {
+                    for (int j = 0; j < business.FeedBacks.Count; j++)
+                    {
+
+                        if (business.FeedBacks[j].OverallRating.HasValue)
+                            totalFeedBack += business.FeedBacks[j].OverallRating.Value;
+
+                    }
+                    business.OverallRating = totalFeedBack / double.Parse(business.FeedBacks.Count.ToString());
+                }
+            
 
             return business;
         }

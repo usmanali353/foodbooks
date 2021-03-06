@@ -17,21 +17,27 @@ namespace foodbooks.Models
         [Required]
         [Phone]
         public string Phone { get; set; }
+        [Required]
+        [EmailAddress]
+        public string Email { get; set; }
 
-        public string Website { get; set; }
+        //public string Website { get; set; }
         [Required]
         public string Description { get; set; }
         
         public double? Longitude { get; set; }
         
         public double? Latitude { get; set; }
+
         public string Address { get; set; }
 
         public TimeSpan? OpeningTime { get; set; }
 
         public TimeSpan? ClosingTime { get; set; }
-        
+        [Required]
         public string OwnerId { get; set; }
+
+        public int? ParentBusinessId { get; set; }
 
         public string Image { get; set; }
 

@@ -13,7 +13,7 @@ namespace foodbooks.Models
       public int id { get; set; }
       public string name { get; set; }
 
-      public bool IsVisible { get; set; }
+      public bool isVisible { get; set; }
 
         [JsonIgnore]
         public List<Business> businesses { get; set; }

@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace foodbooks.Migrations
 {
-    public partial class InitialMigration : Migration
+    public partial class initialMigration : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -56,31 +56,11 @@ namespace foodbooks.Migrations
                     id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     name = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    IsVisible = table.Column<bool>(type: "bit", nullable: false)
+                    isVisible = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_BusinessTypes", x => x.id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Feedbacks",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    CustomerName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Phone = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Email = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    OverallRating = table.Column<double>(type: "float", nullable: true),
-                    dateTime = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    isVisible = table.Column<bool>(type: "bit", nullable: false),
-                    Comment = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Image = table.Column<string>(type: "nvarchar(max)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Feedbacks", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -197,7 +177,7 @@ namespace foodbooks.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Phone = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Website = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Longitude = table.Column<double>(type: "float", nullable: true),
                     Latitude = table.Column<double>(type: "float", nullable: true),
@@ -205,6 +185,7 @@ namespace foodbooks.Migrations
                     OpeningTime = table.Column<TimeSpan>(type: "time", nullable: true),
                     ClosingTime = table.Column<TimeSpan>(type: "time", nullable: true),
                     OwnerId = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ParentBusinessId = table.Column<int>(type: "int", nullable: true),
                     Image = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Qrimage = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     OverallRating = table.Column<double>(type: "float", nullable: false),
@@ -228,7 +209,7 @@ namespace foodbooks.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     BusinessId = table.Column<int>(type: "int", nullable: false),
                     isVisible = table.Column<bool>(type: "bit", nullable: false)
                 },
@@ -249,7 +230,7 @@ namespace foodbooks.Migrations
                 {
                     id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    name = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CategoryId = table.Column<int>(type: "int", nullable: false),
                     isVisible = table.Column<bool>(type: "bit", nullable: false),
                     BusinessId = table.Column<int>(type: "int", nullable: false)
@@ -272,6 +253,47 @@ namespace foodbooks.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Feedbacks",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    CustomerName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Phone = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    OverallRating = table.Column<double>(type: "float", nullable: true),
+                    dateTime = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    isVisible = table.Column<bool>(type: "bit", nullable: false),
+                    Comment = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Image = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    BusinessId = table.Column<int>(type: "int", nullable: false),
+                    CategoryId = table.Column<int>(type: "int", nullable: false),
+                    SubcategoryId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Feedbacks", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Feedbacks_Businesses_BusinessId",
+                        column: x => x.BusinessId,
+                        principalTable: "Businesses",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Feedbacks_Categories_CategoryId",
+                        column: x => x.CategoryId,
+                        principalTable: "Categories",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Feedbacks_Subcategories_SubcategoryId",
+                        column: x => x.SubcategoryId,
+                        principalTable: "Subcategories",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Questions",
                 columns: table => new
                 {
@@ -281,7 +303,8 @@ namespace foodbooks.Migrations
                     QuestionType = table.Column<int>(type: "int", nullable: false),
                     BusinessId = table.Column<int>(type: "int", nullable: false),
                     CategoryId = table.Column<int>(type: "int", nullable: false),
-                    SubCategoryId = table.Column<int>(type: "int", nullable: false)
+                    SubCategoryId = table.Column<int>(type: "int", nullable: false),
+                    isVisible = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -307,6 +330,28 @@ namespace foodbooks.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "QuestionOptions",
+                columns: table => new
+                {
+                    QuestionOptionId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    QuestionOptionText = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Rating = table.Column<double>(type: "float", nullable: false),
+                    QuestionId = table.Column<int>(type: "int", nullable: false),
+                    isVisible = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_QuestionOptions", x => x.QuestionOptionId);
+                    table.ForeignKey(
+                        name: "FK_QuestionOptions_Questions_QuestionId",
+                        column: x => x.QuestionId,
+                        principalTable: "Questions",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "CustomerFeedBacks",
                 columns: table => new
                 {
@@ -318,7 +363,8 @@ namespace foodbooks.Migrations
                     SubcategoryId = table.Column<int>(type: "int", nullable: false),
                     Rating = table.Column<double>(type: "float", nullable: false),
                     feedbackId = table.Column<int>(type: "int", nullable: true),
-                    dateTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    dateTime = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    QuestionOptionsId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -342,6 +388,12 @@ namespace foodbooks.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
+                        name: "FK_CustomerFeedBacks_QuestionOptions_QuestionOptionsId",
+                        column: x => x.QuestionOptionsId,
+                        principalTable: "QuestionOptions",
+                        principalColumn: "QuestionOptionId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
                         name: "FK_CustomerFeedBacks_Questions_QuestionId",
                         column: x => x.QuestionId,
                         principalTable: "Questions",
@@ -353,27 +405,6 @@ namespace foodbooks.Migrations
                         principalTable: "Subcategories",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "QuestionOptions",
-                columns: table => new
-                {
-                    QuestionOptionId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    QuestionOptionText = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Rating = table.Column<double>(type: "float", nullable: false),
-                    QuestionId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_QuestionOptions", x => x.QuestionOptionId);
-                    table.ForeignKey(
-                        name: "FK_QuestionOptions_Questions_QuestionId",
-                        column: x => x.QuestionId,
-                        principalTable: "Questions",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
@@ -446,8 +477,28 @@ namespace foodbooks.Migrations
                 column: "QuestionId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_CustomerFeedBacks_QuestionOptionsId",
+                table: "CustomerFeedBacks",
+                column: "QuestionOptionsId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_CustomerFeedBacks_SubcategoryId",
                 table: "CustomerFeedBacks",
+                column: "SubcategoryId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Feedbacks_BusinessId",
+                table: "Feedbacks",
+                column: "BusinessId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Feedbacks_CategoryId",
+                table: "Feedbacks",
+                column: "CategoryId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Feedbacks_SubcategoryId",
+                table: "Feedbacks",
                 column: "SubcategoryId");
 
             migrationBuilder.CreateIndex(
@@ -502,9 +553,6 @@ namespace foodbooks.Migrations
                 name: "CustomerFeedBacks");
 
             migrationBuilder.DropTable(
-                name: "QuestionOptions");
-
-            migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
@@ -512,6 +560,9 @@ namespace foodbooks.Migrations
 
             migrationBuilder.DropTable(
                 name: "Feedbacks");
+
+            migrationBuilder.DropTable(
+                name: "QuestionOptions");
 
             migrationBuilder.DropTable(
                 name: "Questions");

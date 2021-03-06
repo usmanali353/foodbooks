@@ -10,8 +10,8 @@ using foodbooks.Models;
 namespace foodbooks.Migrations
 {
     [DbContext(typeof(ApplicationdbContext))]
-    [Migration("20210226095219_InitialMigration")]
-    partial class InitialMigration
+    [Migration("20210306062057_initialMigration")]
+    partial class initialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -246,6 +246,10 @@ namespace foodbooks.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Image")
                         .HasColumnType("nvarchar(max)");
 
@@ -265,14 +269,14 @@ namespace foodbooks.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("ParentBusinessId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Phone")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Qrimage")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Website")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("isVisible")
@@ -296,7 +300,7 @@ namespace foodbooks.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<bool>("IsVisible")
+                    b.Property<bool>("isVisible")
                         .HasColumnType("bit");
 
                     b.Property<string>("name")
@@ -318,6 +322,7 @@ namespace foodbooks.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("isVisible")
@@ -346,6 +351,9 @@ namespace foodbooks.Migrations
                     b.Property<int>("QuestionId")
                         .HasColumnType("int");
 
+                    b.Property<int>("QuestionOptionsId")
+                        .HasColumnType("int");
+
                     b.Property<double>("Rating")
                         .HasColumnType("float");
 
@@ -366,6 +374,8 @@ namespace foodbooks.Migrations
 
                     b.HasIndex("QuestionId");
 
+                    b.HasIndex("QuestionOptionsId");
+
                     b.HasIndex("SubcategoryId");
 
                     b.HasIndex("feedbackId");
@@ -380,13 +390,21 @@ namespace foodbooks.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<int>("BusinessId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CategoryId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Comment")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("CustomerName")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Email")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Image")
@@ -398,6 +416,9 @@ namespace foodbooks.Migrations
                     b.Property<string>("Phone")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("SubcategoryId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime?>("dateTime")
                         .HasColumnType("datetime2");
 
@@ -405,6 +426,12 @@ namespace foodbooks.Migrations
                         .HasColumnType("bit");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("BusinessId");
+
+                    b.HasIndex("CategoryId");
+
+                    b.HasIndex("SubcategoryId");
 
                     b.ToTable("Feedbacks");
                 });
@@ -431,6 +458,9 @@ namespace foodbooks.Migrations
 
                     b.Property<int>("SubCategoryId")
                         .HasColumnType("int");
+
+                    b.Property<bool>("isVisible")
+                        .HasColumnType("bit");
 
                     b.HasKey("Id");
 
@@ -460,6 +490,9 @@ namespace foodbooks.Migrations
                     b.Property<double>("Rating")
                         .HasColumnType("float");
 
+                    b.Property<bool>("isVisible")
+                        .HasColumnType("bit");
+
                     b.HasKey("QuestionOptionId");
 
                     b.HasIndex("QuestionId");
@@ -485,6 +518,7 @@ namespace foodbooks.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("name")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("id");
@@ -572,13 +606,13 @@ namespace foodbooks.Migrations
             modelBuilder.Entity("foodbooks.Models.CustomerFeedBack", b =>
                 {
                     b.HasOne("foodbooks.Models.Business", "business")
-                        .WithMany("FeedBacks")
+                        .WithMany("CustomerFeedBacks")
                         .HasForeignKey("BusinessId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("foodbooks.Models.Category", "category")
-                        .WithMany("FeedBacks")
+                        .WithMany("CustomerFeedBacks")
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -589,8 +623,14 @@ namespace foodbooks.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("foodbooks.Models.QuestionOptions", "questionOptions")
+                        .WithMany("customerFeedBacks")
+                        .HasForeignKey("QuestionOptionsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("foodbooks.Models.Subcategory", "subCategory")
-                        .WithMany("FeedBacks")
+                        .WithMany("CustomerFeedBacks")
                         .HasForeignKey("SubcategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -605,7 +645,36 @@ namespace foodbooks.Migrations
 
                     b.Navigation("feedback");
 
+                    b.Navigation("questionOptions");
+
                     b.Navigation("questions");
+
+                    b.Navigation("subCategory");
+                });
+
+            modelBuilder.Entity("foodbooks.Models.Feedback", b =>
+                {
+                    b.HasOne("foodbooks.Models.Business", "business")
+                        .WithMany("FeedBacks")
+                        .HasForeignKey("BusinessId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("foodbooks.Models.Category", "category")
+                        .WithMany("FeedBacks")
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("foodbooks.Models.Subcategory", "subCategory")
+                        .WithMany("FeedBacks")
+                        .HasForeignKey("SubcategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("business");
+
+                    b.Navigation("category");
 
                     b.Navigation("subCategory");
                 });
@@ -671,6 +740,8 @@ namespace foodbooks.Migrations
                 {
                     b.Navigation("Categories");
 
+                    b.Navigation("CustomerFeedBacks");
+
                     b.Navigation("FeedBacks");
 
                     b.Navigation("Questions");
@@ -685,6 +756,8 @@ namespace foodbooks.Migrations
 
             modelBuilder.Entity("foodbooks.Models.Category", b =>
                 {
+                    b.Navigation("CustomerFeedBacks");
+
                     b.Navigation("FeedBacks");
 
                     b.Navigation("Questions");
@@ -704,8 +777,15 @@ namespace foodbooks.Migrations
                     b.Navigation("questionOptions");
                 });
 
+            modelBuilder.Entity("foodbooks.Models.QuestionOptions", b =>
+                {
+                    b.Navigation("customerFeedBacks");
+                });
+
             modelBuilder.Entity("foodbooks.Models.Subcategory", b =>
                 {
+                    b.Navigation("CustomerFeedBacks");
+
                     b.Navigation("FeedBacks");
 
                     b.Navigation("Questions");

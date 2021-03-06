@@ -91,7 +91,7 @@ namespace foodbooks.Controllers
         [HttpPost]
         public async Task<ActionResult<Question>> PostQuestion(Question question)
         {
-            question.IsVisible = true;
+            question.isVisible = true;
             _context.Questions.Add(question);
             await _context.SaveChangesAsync();
 
@@ -107,8 +107,8 @@ namespace foodbooks.Controllers
             {
                 return NotFound();
             }
-            question.IsVisible = !question.IsVisible;
-            _context.Questions.Attach(question).Property(x => x.IsVisible).IsModified = true;
+            question.isVisible = !question.isVisible;
+            _context.Questions.Attach(question).Property(x => x.isVisible).IsModified = true;
             await _context.SaveChangesAsync();
 
             return Ok();

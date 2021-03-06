@@ -21,9 +21,13 @@ namespace foodbooks.Controllers
         }
 
         // GET: api/QuestionOptions
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<QuestionOptions>>> GetQuestionOptions()
+        [HttpGet("{QuestionId}")]
+        public async Task<ActionResult<IEnumerable<QuestionOptions>>> GetQuestionOptions(int? QuestionId)
         {
+            if (QuestionId != null)
+            {
+                return await _context.QuestionOptions.Where(qid => qid.QuestionId == QuestionId).ToListAsync();
+            }
             return await _context.QuestionOptions.ToListAsync();
         }
 
@@ -77,10 +81,12 @@ namespace foodbooks.Controllers
         [HttpPost]
         public async Task<ActionResult<QuestionOptions>> PostQuestionOptions(QuestionOptions questionOptions)
         {
+            questionOptions.isVisible = true;
             _context.QuestionOptions.Add(questionOptions);
+
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetQuestionOptions", new { id = questionOptions.QuestionOptionId }, questionOptions);
+            return Ok("Question Option Inserted Sucessfully");
         }
 
         // DELETE: api/QuestionOptions/5
@@ -92,8 +98,8 @@ namespace foodbooks.Controllers
             {
                 return NotFound();
             }
-            questionOptions.IsVisible = !questionOptions.IsVisible;
-            _context.QuestionOptions.Attach(questionOptions).Property(x=>x.IsVisible).IsModified=true;
+            questionOptions.isVisible = !questionOptions.isVisible;
+            _context.QuestionOptions.Attach(questionOptions).Property(x=>x.isVisible).IsModified=true;
             await _context.SaveChangesAsync();
             return NoContent();
         }

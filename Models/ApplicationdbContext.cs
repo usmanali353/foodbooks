@@ -26,7 +26,8 @@ namespace foodbooks.Models
             base.OnConfiguring(optionsBuilder);
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer("Data Source=SQL5078.site4now.net;Initial Catalog=DB_A70193_SurveyApp;User Id=DB_A70193_SurveyApp_admin;Password=Abcd@1234");
+                // optionsBuilder.UseSqlServer("Data Source=SQL5078.site4now.net;Initial Catalog=DB_A70193_SurveyApp;User Id=DB_A70193_SurveyApp_admin;Password=Abcd@1234");
+                optionsBuilder.UseSqlServer("Data Source=(localdb)\\ProjectsV13;Initial Catalog=foodbookdb;Integrated Security=True;");
             }
         }
 

@@ -17,6 +17,7 @@ namespace foodbooks.Models
         [Phone]
         public string phone { get; set; }
         [Required]
+        [DataType(DataType.Password)]
         public string password { get; set; }
         [Required]
         public string country { get; set; }

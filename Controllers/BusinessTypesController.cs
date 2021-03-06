@@ -77,7 +77,7 @@ namespace foodbooks.Controllers
         [HttpPost]
         public async Task<ActionResult<BusinessType>> PostBusinessType(BusinessType businessType)
         {
-            businessType.IsVisible = true;
+            businessType.isVisible = true;
             _context.BusinessTypes.Add(businessType);
             await _context.SaveChangesAsync();
 
@@ -93,8 +93,8 @@ namespace foodbooks.Controllers
             {
                 return NotFound();
             }
-            businessType.IsVisible = !businessType.IsVisible;
-            _context.BusinessTypes.Attach(businessType).Property(x => x.IsVisible).IsModified = true;
+            businessType.isVisible = !businessType.isVisible;
+            _context.BusinessTypes.Attach(businessType).Property(x => x.isVisible).IsModified = true;
             await _context.SaveChangesAsync();
 
             return NoContent();
